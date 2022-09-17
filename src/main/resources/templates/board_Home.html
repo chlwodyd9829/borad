@@ -1,0 +1,49 @@
+<!doctype html>
+<html xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/main.css">
+    <title>게시판 홈</title>
+</head>
+<body>
+<div class="wrap">
+<!--    header-->
+    <header>
+        <div class="innerHeader">
+            <h1 class="logo">
+                <a href="/board">
+                    <span>B</span>
+                </a>
+            </h1>
+            <span>게시판</span>
+            <!--로그인 사용자 및 로그아웃-->
+            <div class="user">
+                <span th:text="loginUser">로그인 유저</span>
+                <a href="/board">로그아웃</a>
+            </div>
+        </div>
+    </header>
+    <!--section-->
+    <section>
+        <div class="boardCols">
+            <ul>
+                <li><span>번호</span></li>
+                <li><span>작성시간</span></li>
+                <li><span>작성자</span></li>
+                <li><span>제목</span></li>
+                <li><span>조회수</span></li>
+            </ul>
+        </div>
+        <div class="boardContents">
+            <div th:each="boardContent : ${boardList}" class="boardContent">
+                <p th:field="${boardContent.id}" th:text="${boardContent.id}">번호</p>
+                <p th:field="${boardContent.postTime}" th:text="${boardContent.postTime}">작성시간</p>
+                <p th:field="${boardContent.userId}" th:text="${boardContent.userId}">작성자</p>
+                <p th:field="${boardContent.title}" th:text="${boardContent.title}">제목</p>
+                <p th:field="${boardContent.viewCnt}" th:text="${boardContent.viewCnt}">조회수</p>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>
