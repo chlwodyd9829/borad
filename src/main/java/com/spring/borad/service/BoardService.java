@@ -40,4 +40,17 @@ public class BoardService {
         String format = simpleDateFormat.format(calendar.getTime());
         return format;
     }
+    /**
+     * 페이지 개수 반환
+     */
+    public int getListCnt(){
+        long count = boardRepository.count();
+        return Long.valueOf(count).intValue();
+    }
+    /**
+     * 페이지 범위에 해당 하는 목록 반환
+     */
+    public List<BoardVO> boardVOPageList(int rangeSize, int start){
+        return boardRepository.findStartEnd(rangeSize,start);
+    }
 }

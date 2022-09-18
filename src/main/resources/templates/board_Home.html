@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
     <title>게시판 홈</title>
 </head>
 <body>
@@ -25,23 +26,32 @@
     </header>
     <!--section-->
     <section>
-        <div class="boardCols">
-            <ul>
-                <li><span>번호</span></li>
-                <li><span>작성시간</span></li>
-                <li><span>작성자</span></li>
-                <li><span>제목</span></li>
-                <li><span>조회수</span></li>
-            </ul>
-        </div>
-        <div class="boardContents">
-            <div th:each="boardContent : ${boardList}" class="boardContent">
-                <p th:field="${boardContent.id}" th:text="${boardContent.id}">번호</p>
-                <p th:field="${boardContent.postTime}" th:text="${boardContent.postTime}">작성시간</p>
-                <p th:field="${boardContent.userId}" th:text="${boardContent.userId}">작성자</p>
-                <p th:field="${boardContent.title}" th:text="${boardContent.title}">제목</p>
-                <p th:field="${boardContent.viewCnt}" th:text="${boardContent.viewCnt}">조회수</p>
+        <div class="container text-center border border-4 border-dark rounded">
+            <div class="row border-bottom border-4 border-dark bg-dark">
+                <ul>
+                    <li class="col"><span>번호</span></li>
+                    <li class="col"><span>제목</span></li>
+                    <li class="col"><span>작성자</span></li>
+                    <li class="col"><span>조회수</span></li>
+                    <li class="col"><span>작성시간</span></li>
+                </ul>
             </div>
+            <div class="row">
+                <div th:each="boardContent : ${boardList}" class="boardContent">
+                    <p class="col" th:field="${boardContent.id}" th:text="${boardContent.id}">번호</p>
+                    <p class="col" th:field="${boardContent.title}" th:text="${boardContent.title}">제목</p>
+                    <p class="col" th:field="${boardContent.userId}" th:text="${boardContent.userId}">작성자</p>
+                    <p class="col" th:field="${boardContent.viewCnt}" th:text="${boardContent.viewCnt}">조회수</p>
+                    <p class="col" th:field="${boardContent.postTime}" th:text="${boardContent.postTime}">작성시간</p>
+                </div>
+            </div>
+        </div>
+        <div class="row-cols-sm-3 text-center">
+            <ul class="pagination border border-secondary rounded">
+                <li class="col prev bg-light" th:if="${pagination.prev}">이전</li>
+                <li class="col bg-dark" th:each="num : ${#numbers.sequence(pagination.rangeStart,pagination.rangeStart+pagination.listSize-1)}"><a th:href="|/board?page=${num}|" th:text="${num}"></a></li>
+                <li class="col next bg-light" th:if="${pagination.next}">다음</li>
+            </ul>
         </div>
     </section>
 </div>
