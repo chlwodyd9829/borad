@@ -41,4 +41,8 @@ public class BoardController {
         model.addAttribute("boardList",boardVOList);
         return "board_Home";
     }
+    @GetMapping("/write")
+    public String post(){
+        return "write";
+    }
 }

@@ -26,6 +26,9 @@ public class Pagination {
     //페이지 시작 번호
     private int rangeStart;
 
+    //페이지 시작 끝 번호
+    private int rangeEnd;
+
     //목록 시작 번호
     private int start;
 
@@ -45,8 +48,12 @@ public class Pagination {
         this.pageCnt = (int) Math.ceil(listCnt/listSize);
         this.start = (this.page*this.listSize)-listSize+1;
         this.end = this.start + listSize - 1;
-        this.rangeStart = (int) Math.ceil(page/ (double)rangeSize);
-        this.prev = this.start == 1 ? false : true;
-        this.next = this.end > listCnt ? false : true;
+        this.rangeStart = ((int) Math.ceil(page/ (double)rangeSize))*rangeSize - (rangeSize-1);
+        if(rangeStart < 1){
+            this.rangeStart = 1;
+        }
+        this.rangeEnd = rangeEnd > pageCnt ? pageCnt:rangeStart + (rangeSize -1);
+        this.prev = this.rangeStart <= 1 ? false : true;
+        this.next = this.rangeStart+rangeSize >= pageCnt ? false : true;
     }
 }

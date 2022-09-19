@@ -110,13 +110,30 @@ section .pagination li{
 section .pagination ul li{
     display: inline-block;
 }
-section .pagination .col.prev{
+section .pagination .col.prev a{
     color: black;
 }
-section .pagination .col.next{
+section .pagination .col.next a{
     color: black;
 }
 section .pagination .col a{
     text-decoration: none;
     color: white;
+}
+section .pagination .col.page.active{
+    background: #e2e2e2;
+}
+section .pagination .col.page.active a{
+    color: #291900;
+}
+section .write{
+    position:relative;
+    left:70%;
+}
+
+.container .content{
+    align-items: center;
+}
+.container p{
+    display: inline-block;
 }

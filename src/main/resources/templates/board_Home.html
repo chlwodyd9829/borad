@@ -38,8 +38,8 @@
             </div>
             <div class="row">
                 <div th:each="boardContent : ${boardList}" class="boardContent">
-                    <p class="col" th:field="${boardContent.id}" th:text="${boardContent.id}">번호</p>
-                    <p class="col" th:field="${boardContent.title}" th:text="${boardContent.title}">제목</p>
+                    <a class="col" th:field="${boardContent.id}" th:text="${boardContent.id}">번호</a>
+                    <a class="col" th:field="${boardContent.title}" th:text="${boardContent.title}">제목</a>
                     <p class="col" th:field="${boardContent.userId}" th:text="${boardContent.userId}">작성자</p>
                     <p class="col" th:field="${boardContent.viewCnt}" th:text="${boardContent.viewCnt}">조회수</p>
                     <p class="col" th:field="${boardContent.postTime}" th:text="${boardContent.postTime}">작성시간</p>
@@ -48,12 +48,46 @@
         </div>
         <div class="row-cols-sm-3 text-center">
             <ul class="pagination border border-secondary rounded">
-                <li class="col prev bg-light" th:if="${pagination.prev}">이전</li>
-                <li class="col bg-dark" th:each="num : ${#numbers.sequence(pagination.rangeStart,pagination.rangeStart+pagination.listSize-1)}"><a th:href="|/board?page=${num}|" th:text="${num}"></a></li>
-                <li class="col next bg-light" th:if="${pagination.next}">다음</li>
+                <li class="col prev bg-light" th:if="${pagination.prev}"><a onclick="prev()">이전</a></li>
+                <li class="col page bg-dark" th:each="num : ${#numbers.sequence(pagination.rangeStart,pagination.rangeEnd)}"><a th:href="|/board?page=${num}|" th:text="${num}"></a></li>
+                <li class="col next bg-light" th:if="${pagination.next}"><a onclick="next()">다음</a></li>
             </ul>
+        </div>
+        <div class="row">
+            <div class="col">
+                <input class="rounded" type="text" autocomplete="false">
+                <button class="btn btn-sm btn-dark">찾기</button>
+            </div>
+            <div class="col-sm">
+                <a class="write btn btn-dark" href="/board/write">글쓰기</a>
+            </div>
         </div>
     </section>
 </div>
+<script th:inline="javascript">
+    let pageList = document.querySelectorAll('section .pagination .col.page');
+    let page = [[${pagination.page}]];
+    console.log(pageList);
+    for (let i in pageList) {
+        console.log(i);
+        if(pageList[i].innerText == page){
+            pageList[i].classList.add("active");
+            pageList[i].classList.remove("bg-dark");
+        }
+        else {
+            pageList[i].classList.remove("active");
+        }
+    }
+    function prev(){
+        let url = "/board?page=";
+        url = url + [[${pagination.rangeStart - pagination.rangeSize}]];
+        location.href=url;
+    }
+    function next(){
+        let url = "/board?page=";
+        url = url + [[${pagination.rangeStart + pagination.rangeSize}]];
+        location.href=url;
+    }
+</script>
 </body>
 </html>
