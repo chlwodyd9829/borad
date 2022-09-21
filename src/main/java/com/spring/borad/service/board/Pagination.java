@@ -1,4 +1,4 @@
-package com.spring.borad.domain.board;
+package com.spring.borad.service.board;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -45,14 +45,17 @@ public class Pagination {
         this.page=page;
         this.listCnt=listCnt;
 
-        this.pageCnt = (int) Math.ceil(listCnt/listSize);
+        this.pageCnt = (int) Math.ceil(listCnt/(double)listSize);
         this.start = (this.page*this.listSize)-listSize+1;
         this.end = this.start + listSize - 1;
         this.rangeStart = ((int) Math.ceil(page/ (double)rangeSize))*rangeSize - (rangeSize-1);
         if(rangeStart < 1){
             this.rangeStart = 1;
         }
-        this.rangeEnd = rangeEnd > pageCnt ? pageCnt:rangeStart + (rangeSize -1);
+        this.rangeEnd = rangeStart + (rangeSize -1);
+        if(rangeEnd > pageCnt){
+            this.rangeEnd=pageCnt;
+        }
         this.prev = this.rangeStart <= 1 ? false : true;
         this.next = this.rangeStart+rangeSize >= pageCnt ? false : true;
     }

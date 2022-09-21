@@ -1,4 +1,4 @@
-package com.spring.borad.service;
+package com.spring.borad.service.board;
 
 import com.spring.borad.domain.board.BoardVO;
 import com.spring.borad.repository.board.BoardRepository;

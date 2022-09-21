@@ -19,8 +19,9 @@
             <span>게시판</span>
             <!--로그인 사용자 및 로그아웃-->
             <div class="user">
-                <span th:text="loginUser">로그인 유저</span>
-                <a href="/board">로그아웃</a>
+                <span th:text="${loginUser?.id}">로그인 유저</span>
+                <a th:if="!${loginUser}" href="/board/login">로그인</a>
+                <a href="#" th:unless="!${loginUser}" onclick="logout()">로그아웃</a>
             </div>
         </div>
     </header>
@@ -38,7 +39,7 @@
             </div>
             <div class="row">
                 <div th:each="boardContent : ${boardList}" class="boardContent">
-                    <a class="col" th:field="${boardContent.id}" th:text="${boardContent.id}">번호</a>
+                    <p class="col" th:field="${boardContent.id}" th:text="${boardContent.id}">번호</p>
                     <a class="col" th:field="${boardContent.title}" th:text="${boardContent.title}">제목</a>
                     <p class="col" th:field="${boardContent.userId}" th:text="${boardContent.userId}">작성자</p>
                     <p class="col" th:field="${boardContent.viewCnt}" th:text="${boardContent.viewCnt}">조회수</p>
@@ -58,7 +59,7 @@
                 <input class="rounded" type="text" autocomplete="false">
                 <button class="btn btn-sm btn-dark">찾기</button>
             </div>
-            <div class="col-sm">
+            <div th:if="${loginUser}" class="col-sm">
                 <a class="write btn btn-dark" href="/board/write">글쓰기</a>
             </div>
         </div>
@@ -87,6 +88,14 @@
         let url = "/board?page=";
         url = url + [[${pagination.rangeStart + pagination.rangeSize}]];
         location.href=url;
+    }
+
+    function logout(){
+        let form = document.createElement("form");
+        form.setAttribute("method","post");
+        form.setAttribute("action","/board/logout");
+        document.body.appendChild(form);
+        form.submit();
     }
 </script>
 </body>
