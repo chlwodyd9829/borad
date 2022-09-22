@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 @Service
@@ -21,9 +23,10 @@ public class UserService {
     /**
      * 로그인 기능
      */
-    public User login(LoginForm loginForm){
+    public User login(LoginForm loginForm) throws NoSuchAlgorithmException {
+        String encrypt = encrypt(loginForm.getPassword());
         return userRepository.findById(loginForm.getId())
-                .filter(user -> user.getPassword().equals(loginForm.getPassword()))
+                .filter(user -> user.getPassword().equals(encrypt))
                 .orElse(null);
     }
     /**
@@ -40,12 +43,13 @@ public class UserService {
     /**
      * 회원가입
      */
-    public User join(JoinForm joinForm){
+    public User join(JoinForm joinForm) throws NoSuchAlgorithmException {
         User findUser = userRepository.findById(joinForm.getId()).stream().findAny().orElse(null);
         if(findUser != null){
             return null;
         }
-        User user = new User(joinForm.getId(), joinForm.getPassword(), joinForm.getName());
+        String encrypt = encrypt(joinForm.getPassword());
+        User user = new User(joinForm.getId(), encrypt, joinForm.getName());
         User save = userRepository.save(user);
         log.info("save User={}",save);
         return save;
@@ -56,5 +60,19 @@ public class UserService {
     public User findUser(User user){
         Optional<User> find = userRepository.findById(user.getId());
         return find.stream().findAny().orElse(null);
+    }
+    private String encrypt(String str) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(str.getBytes());
+
+        return bytesToHex(md.digest());
+    }
+
+    private String bytesToHex(byte[] bytes){
+        StringBuilder builder = new StringBuilder();
+        for (byte b : bytes){
+            builder.append(String.format("%02x",b));
+        }
+        return builder.toString();
     }
 }

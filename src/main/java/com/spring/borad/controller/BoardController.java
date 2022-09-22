@@ -1,6 +1,7 @@
 package com.spring.borad.controller;
 
 import com.spring.borad.domain.board.BoardVO;
+import com.spring.borad.domain.board.PostingForm;
 import com.spring.borad.domain.user.JoinForm;
 import com.spring.borad.domain.user.LoginForm;
 import com.spring.borad.domain.user.User;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Controller
@@ -44,7 +46,11 @@ public class BoardController {
             boardService.savePost(boardVO);
         }
         JoinForm joinForm = new JoinForm("asd", "123", "name");
+        try{
         userService.join(joinForm);
+        }catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+        }
     }
     @GetMapping
     public String home(@RequestParam(required = false, defaultValue = "1")int page, Model model,HttpServletRequest request) {
@@ -63,7 +69,9 @@ public class BoardController {
         return "board_Home";
     }
     @GetMapping("/write")
-    public String post(){
+    public String post(@ModelAttribute PostingForm postingForm, Model model, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        model.addAttribute("loginUser",session.getAttribute("loginUser"));
         return "write";
     }
 
@@ -76,12 +84,16 @@ public class BoardController {
         if(bindingResult.hasErrors()){
             return "join";
         }
-        User join = userService.join(joinForm);
-        if(join == null){
-            bindingResult.reject("Exist","이미 존재하는 아이디 입니다.");
-            return "join";
+        try{
+            User join = userService.join(joinForm);
+            if(join == null){
+                bindingResult.reject("Exist","이미 존재하는 아이디 입니다.");
+                return "join";
+            }
         }
-
+        catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+        }
         return "redirect:/board";
     }
 
@@ -94,18 +106,23 @@ public class BoardController {
         if(bindingResult.hasErrors()){
             return "login";
         }
-        User loginUser = userService.login(loginForm);
-        if(loginUser == null){
-            response.setCharacterEncoding("utf-8");
-            PrintWriter writer = response.getWriter();
-            writer.println("<script>");
-            writer.println("alert('아이디 혹은 비밀번호를 확인 해주세요.')");
-            writer.println("history.go(-1)");
-            writer.println("</script>");
-            return "login";
+        try {
+            User loginUser = userService.login(loginForm);
+            if (loginUser == null) {
+                response.setCharacterEncoding("utf-8");
+                PrintWriter writer = response.getWriter();
+                writer.println("<script>");
+                writer.println("alert('아이디 혹은 비밀번호를 확인 해주세요.')");
+                writer.println("history.go(-1)");
+                writer.println("</script>");
+                return "login";
+            }
+            HttpSession session = request.getSession();
+            session.setAttribute("loginUser",loginUser);
         }
-        HttpSession session = request.getSession();
-        session.setAttribute("loginUser",loginUser);
+        catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+        }
         return "redirect:/board";
     }
     @PostMapping("/logout")

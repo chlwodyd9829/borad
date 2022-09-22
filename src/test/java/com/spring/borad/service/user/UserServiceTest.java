@@ -11,6 +11,8 @@ import org.springframework.mock.web.MockHttpSession;
 
 import javax.servlet.http.HttpSession;
 
+import java.security.NoSuchAlgorithmException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -24,7 +26,7 @@ class UserServiceTest {
     private final MockHttpServletRequest request = new MockHttpServletRequest();
 
     @Test
-    void login() {
+    void login() throws NoSuchAlgorithmException {
         JoinForm joinForm = new JoinForm("id", "pw", "name");
         User join = userService.join(joinForm);
 
@@ -59,7 +61,7 @@ class UserServiceTest {
     }
 
     @Test
-    void join() {
+    void join() throws NoSuchAlgorithmException {
         JoinForm joinForm = new JoinForm("id","pw", "name");
 
         User join = userService.join(joinForm);
