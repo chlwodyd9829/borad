@@ -1,9 +1,6 @@
 package com.spring.borad.domain.board;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -12,6 +9,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Posting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +27,10 @@ public class Posting {
     @Column(name = "viewCnt")
     @ColumnDefault("0")
     private int viewCnt;
+
+    public Posting(String title, String name, String content) {
+        this.title = title;
+        this.name = name;
+        this.content = content;
+    }
 }

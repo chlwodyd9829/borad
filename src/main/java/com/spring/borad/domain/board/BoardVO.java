@@ -1,6 +1,8 @@
 package com.spring.borad.domain.board;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 
@@ -24,6 +26,12 @@ public class BoardVO {
     private String postTime;
 
     @Column(name = "viewCnt")
+    @ColumnDefault("0")
     private int viewCnt;
 
+    public BoardVO(String userId, String title, String postTime) {
+        this.userId = userId;
+        this.title = title;
+        this.postTime = postTime;
+    }
 }

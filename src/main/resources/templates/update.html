@@ -2,24 +2,27 @@
 <html xmlns:th="www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/write.css">
-    <title>글쓰기</title>
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/write.css">
+    <title>보기</title>
 </head>
 <body>
     <div class="container">
         <div class="row">
-            <h2 class="col" style="font-size: 2em"> 글쓰기</h2>
+            <h2 class="col" style="font-size: 2em">수정</h2>
         </div>
         <div>
-            <form method="post" th:object="${postingForm}">
+            <form method="post" th:object="${updateForm}">
+                <div class="row">
+                    <div class="col-1">
+                        <label for="id">번호</label>
+                        <input type="text" id="id" th:field="*{id}" class="form-control" readonly>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-4">
                         <label for="title">제목</label>
-                        <input th:errorclass="field-error" type="text" id="title" th:field="*{title}" class="form-control">
-                        <div class="field-error">
-                            <label th:errors="*{title}" style="color: red">제목 오류</label>
-                        </div>
+                        <input type="text" id="title" th:field="*{title}" class="form-control">
                     </div>
                 </div>
                 <div class="row">
@@ -33,13 +36,10 @@
                     <div class="col-6">
                         <textarea class="form-control" th:field="*{content}" rows="20" name="content" id="content"></textarea>
                     </div>
-                    <div class="field-error">
-                        <label th:errors="*{content}" style="color: red">내용 오류</label>
-                    </div>
                 </div>
                 <div class="row">
-                    <button class="btn btn-dark col-2" type="submit">글쓰기</button>
-                    <a class="btn btn-dark col-2" href="/board/">뒤로</a>
+                    <button class="btn btn-dark col-2" type="submit">수정</button>
+                    <a class="btn btn-dark col-2" href="/board/">취소</a>
                 </div>
             </form>
         </div>

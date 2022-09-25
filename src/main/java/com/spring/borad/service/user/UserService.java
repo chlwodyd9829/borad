@@ -61,6 +61,14 @@ public class UserService {
         Optional<User> find = userRepository.findById(user.getId());
         return find.stream().findAny().orElse(null);
     }
+
+    /**
+     *
+     * @param str
+     * @return String
+     * @throws NoSuchAlgorithmException
+     * 비밀번호 암호화 - SHA-256 사용
+     */
     private String encrypt(String str) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(str.getBytes());
@@ -68,6 +76,12 @@ public class UserService {
         return bytesToHex(md.digest());
     }
 
+    /**
+     *
+     * @param bytes
+     * @return String
+     * 바이트 코드 -> 16진수
+     */
     private String bytesToHex(byte[] bytes){
         StringBuilder builder = new StringBuilder();
         for (byte b : bytes){

@@ -40,7 +40,7 @@
             <div class="row">
                 <div th:each="boardContent : ${boardList}" class="boardContent">
                     <p class="col" th:field="${boardContent.id}" th:text="${boardContent.id}">번호</p>
-                    <a class="col" th:field="${boardContent.title}" th:text="${boardContent.title}">제목</a>
+                    <a class="col" th:href="|/board/view/${boardContent.id}|" th:field="${boardContent.title}" th:text="${boardContent.title}">제목</a>
                     <p class="col" th:field="${boardContent.userId}" th:text="${boardContent.userId}">작성자</p>
                     <p class="col" th:field="${boardContent.viewCnt}" th:text="${boardContent.viewCnt}">조회수</p>
                     <p class="col" th:field="${boardContent.postTime}" th:text="${boardContent.postTime}">작성시간</p>

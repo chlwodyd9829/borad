@@ -56,6 +56,9 @@ public class Pagination {
         if(rangeEnd > pageCnt){
             this.rangeEnd=pageCnt;
         }
+        if(rangeEnd < 1){
+            rangeEnd=rangeStart;
+        }
         this.prev = this.rangeStart <= 1 ? false : true;
         this.next = this.rangeStart+rangeSize >= pageCnt ? false : true;
     }

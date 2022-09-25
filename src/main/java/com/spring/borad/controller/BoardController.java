@@ -1,7 +1,9 @@
 package com.spring.borad.controller;
 
 import com.spring.borad.domain.board.BoardVO;
+import com.spring.borad.domain.board.Posting;
 import com.spring.borad.domain.board.PostingForm;
+import com.spring.borad.domain.board.ViewForm;
 import com.spring.borad.domain.user.JoinForm;
 import com.spring.borad.domain.user.LoginForm;
 import com.spring.borad.domain.user.User;
@@ -36,14 +38,9 @@ public class BoardController {
     //메인 화면, 게시글 목록이 보인다.
     @PostConstruct
     public void init(){
-        for (int i = 0; i < 200; i++){
-            Long id = Long.valueOf(i+1);
-            BoardVO boardVO = new BoardVO();
-            boardVO.setId(id);
-            boardVO.setUserId(id.toString());
-            boardVO.setTitle(id.toString()) ;
-            boardVO.setViewCnt(0);
-            boardService.savePost(boardVO);
+        for (int i = 0; i < 5; i++){
+            PostingForm content = new PostingForm(Integer.toString(i + 1), Integer.toString(i + 1), "content");
+            boardService.makePost(content);
         }
         JoinForm joinForm = new JoinForm("asd", "123", "name");
         try{
@@ -52,6 +49,10 @@ public class BoardController {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 게시판 메인
+     */
     @GetMapping
     public String home(@RequestParam(required = false, defaultValue = "1")int page, Model model,HttpServletRequest request) {
         Pagination pagination = new Pagination();
@@ -68,13 +69,29 @@ public class BoardController {
         }
         return "board_Home";
     }
+
+    /**
+     * 글쓰기 요청
+     */
     @GetMapping("/write")
     public String post(@ModelAttribute PostingForm postingForm, Model model, HttpServletRequest request){
         HttpSession session = request.getSession();
         model.addAttribute("loginUser",session.getAttribute("loginUser"));
+        User loginUser = (User) session.getAttribute("loginUser");
+        postingForm.setName(loginUser.getId());
         return "write";
     }
-
+    @PostMapping("/write")
+    public String post(@Validated @ModelAttribute PostingForm postingForm, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "write";
+        }
+        boardService.makePost(postingForm);
+        return "redirect:/board";
+    }
+    /**
+     * 회원가입 요청
+     */
     @GetMapping("/join")
     public String join(@ModelAttribute JoinForm joinForm){
         return "join";
@@ -97,6 +114,9 @@ public class BoardController {
         return "redirect:/board";
     }
 
+    /**
+     * 로그인 요청
+     */
     @GetMapping("/login")
     public String login(@ModelAttribute LoginForm loginForm){
         return "login";
@@ -125,6 +145,10 @@ public class BoardController {
         }
         return "redirect:/board";
     }
+
+    /**
+     * 로그아웃 요청
+     */
     @PostMapping("/logout")
     public String logout(HttpServletRequest request){
         log.info("logout");
@@ -132,5 +156,37 @@ public class BoardController {
             return "board_Home";
         }
         return "redirect:/board";
+    }
+    /**
+     * 글보기
+     */
+    @GetMapping("/view/{id}")
+    public String viewPost(@PathVariable Long id,Model model,HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Posting posting = boardService.viewPost(id);
+        boardService.viewCnt(id);
+        ViewForm viewForm = new ViewForm(posting.getId(), posting.getTitle(), posting.getName(), posting.getContent(), posting.getViewCnt());
+        model.addAttribute("viewForm",viewForm);
+        model.addAttribute("loginUser",session.getAttribute("loginUser"));
+        return "view";
+    }
+    /**
+     * 글수정
+     */
+    @GetMapping("/update/{id}")
+    public String updatePost(@PathVariable Long id, Model model){
+        Posting posting = boardService.viewPost(id);
+        ViewForm viewForm = new ViewForm(posting.getId(), posting.getTitle(),posting.getName(),posting.getContent(), posting.getViewCnt());
+        model.addAttribute("updateForm",viewForm);
+        return "update";
+    }
+
+    //todo
+    @PostMapping("/update/{id}")
+    public String updatePost(@Validated @PathVariable Long id, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "/update/{id}";
+        }
+        return null;
     }
 }

@@ -1,20 +1,32 @@
 package com.spring.borad.service;
 
-import com.spring.borad.BoradApplication;
 import com.spring.borad.domain.board.BoardVO;
+import com.spring.borad.domain.board.Posting;
+import com.spring.borad.domain.board.PostingForm;
 import com.spring.borad.repository.board.BoardRepository;
+import com.spring.borad.repository.board.PostRepository;
+import com.spring.borad.service.board.BoardService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 class BoardServiceTest {
 
     @Autowired
     private BoardRepository boardRepository;
+    @Autowired
+    private BoardService boardService;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @Test
     void save(){
@@ -26,11 +38,11 @@ class BoardServiceTest {
 
         BoardVO findBoard = boardRepository.findById(boardId).stream().findAny().orElse(null);
 
-        Assertions.assertThat(boardVO.getId()).isEqualTo(findBoard.getId());
-        Assertions.assertThat(boardVO.getUserId()).isEqualTo(findBoard.getUserId());
-        Assertions.assertThat(boardVO.getTitle()).isEqualTo(findBoard.getTitle());
-        Assertions.assertThat(boardVO.getPostTime()).isEqualTo(findBoard.getPostTime());
-        Assertions.assertThat(boardVO.getViewCnt()).isEqualTo(findBoard.getViewCnt());
+        assertThat(boardVO.getId()).isEqualTo(findBoard.getId());
+        assertThat(boardVO.getUserId()).isEqualTo(findBoard.getUserId());
+        assertThat(boardVO.getTitle()).isEqualTo(findBoard.getTitle());
+        assertThat(boardVO.getPostTime()).isEqualTo(findBoard.getPostTime());
+        assertThat(boardVO.getViewCnt()).isEqualTo(findBoard.getViewCnt());
     }
     @Test
     void findStartEnd(){
@@ -48,5 +60,28 @@ class BoardServiceTest {
         for (BoardVO boardVO : startEnd) {
             System.out.println("boardVO = " + boardVO);
         }
+    }
+    @Test
+    void makePost(){
+        PostingForm postingForm = new PostingForm("title", "name", "content");
+        boardService.makePost(postingForm);
+
+        Posting findPost = postRepository.findByName(postingForm.getName()).stream().filter(p -> p.getContent().equals(postingForm.getContent())).findAny().orElse(null);
+        BoardVO findBoard = boardRepository.findById(findPost.getId()).stream().findFirst().orElse(null);
+
+
+        System.out.println(findPost.toString());
+        System.out.println(findBoard.toString());
+        assertThat(findPost.getId()).isEqualTo(findBoard.getId());
+        assertThat(findPost.getTitle()).isEqualTo(findBoard.getTitle());
+        assertThat(findPost.getName()).isEqualTo(findBoard.getUserId());
+    }
+    @Test
+    void cntTest(){
+        BoardVO boardVO = new BoardVO(1L, "id", "title", "date", 0);
+        BoardVO savePost = boardService.savePost(boardVO);
+        boardService.viewCnt(savePost.getId());
+        BoardVO findBoard = boardRepository.findById(boardVO.getId()).stream().findAny().orElse(null);
+        assertThat(findBoard.getViewCnt()).isEqualTo(1);
     }
 }
