@@ -3,6 +3,7 @@ package com.spring.borad.service.board;
 import com.spring.borad.domain.board.BoardVO;
 import com.spring.borad.domain.board.Posting;
 import com.spring.borad.domain.board.PostingForm;
+import com.spring.borad.domain.board.ViewForm;
 import com.spring.borad.repository.board.BoardRepository;
 import com.spring.borad.repository.board.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -83,5 +84,12 @@ public class BoardService {
         boardVO.setViewCnt(boardVO.getViewCnt()+1);
         log.info(boardVO.toString());
         boardRepository.increaseViewCnt(boardVO.getViewCnt(), boardVO.getId());
+    }
+    /**
+     * 게시글 수정
+     */
+    public void update(ViewForm viewForm){
+        boardRepository.updateBoard(viewForm.getTitle(), makeDate(), viewForm.getId());
+        postRepository.updatePosting(viewForm.getTitle(), viewForm.getContent(), viewForm.getId());
     }
 }

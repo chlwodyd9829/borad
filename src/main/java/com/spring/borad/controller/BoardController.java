@@ -7,12 +7,11 @@ import com.spring.borad.domain.board.ViewForm;
 import com.spring.borad.domain.user.JoinForm;
 import com.spring.borad.domain.user.LoginForm;
 import com.spring.borad.domain.user.User;
-import com.spring.borad.service.board.Pagination;
 import com.spring.borad.service.board.BoardService;
+import com.spring.borad.service.board.Pagination;
 import com.spring.borad.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.mapping.Join;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -183,10 +182,11 @@ public class BoardController {
 
     //todo
     @PostMapping("/update/{id}")
-    public String updatePost(@Validated @PathVariable Long id, BindingResult bindingResult){
+    public String updatePost(@Validated @PathVariable Long id, @ModelAttribute ViewForm viewForm,BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            return "/update/{id}";
+            return "update";
         }
-        return null;
+        boardService.update(viewForm);
+        return "redirect:/board/view/{id}";
     }
 }
