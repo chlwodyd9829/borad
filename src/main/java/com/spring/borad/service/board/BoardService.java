@@ -92,4 +92,14 @@ public class BoardService {
         boardRepository.updateBoard(viewForm.getTitle(), makeDate(), viewForm.getId());
         postRepository.updatePosting(viewForm.getTitle(), viewForm.getContent(), viewForm.getId());
     }
+    /**
+     * 게시글 삭제
+     */
+    public void delete(Long id){
+        BoardVO boardVO = boardRepository.findById(id).stream().findAny().orElse(null);
+        if(boardVO == null){
+            return;
+        }
+        boardRepository.delete(boardVO);
+    }
 }

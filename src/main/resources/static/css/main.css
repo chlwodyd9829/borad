@@ -90,13 +90,22 @@ section .row ul{
 section .row .col{
     display: inline-block;
     margin:10px 70px;
- 
+
 }
 section .container > .row{
     color:white;
 }
 section .container > .row p{
     color: black;
+}
+section .container li{
+    display: inline-block;
+}
+.boardContent{
+    margin: 10px 0;
+}
+.boardContent > a{
+    display: inline-block;
 }
 section .pagination{
     position: relative;

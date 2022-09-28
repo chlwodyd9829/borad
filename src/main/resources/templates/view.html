@@ -39,10 +39,24 @@
                 </div>
                 <div class="row">
                     <a th:onclick="|location.href='@{/board/update/{id}(id=*{id})}'|" th:if="${viewForm.name.equals(loginUser?.id)}" class="btn btn-dark col-2">수정</a>
+                    <a th:onclick=deletePosting() th:if="${viewForm.name.equals(loginUser?.id)}" class="btn btn-dark col-2">삭제</a>
                     <a class="btn btn-dark col-2" href="/board/">뒤로</a>
                 </div>
             </form>
         </div>
     </div>
+    <script th:inline="javascript">
+        function deletePosting() {
+            if(confirm("정말 삭제 하시겠습니까?")) {
+                let id = [[${viewForm.id}]];
+                let form = document.createElement("form");
+                form.setAttribute("method", "post");
+                form.setAttribute("action", "/board/delete/" + id);
+                document.body.appendChild(form);
+                form.submit();
+                alert("삭제 되었습니다.");
+            }
+        }
+    </script>
 </body>
 </html>

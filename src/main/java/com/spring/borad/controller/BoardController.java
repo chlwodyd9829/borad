@@ -180,7 +180,6 @@ public class BoardController {
         return "update";
     }
 
-    //todo
     @PostMapping("/update/{id}")
     public String updatePost(@Validated @PathVariable Long id, @ModelAttribute ViewForm viewForm,BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -188,5 +187,13 @@ public class BoardController {
         }
         boardService.update(viewForm);
         return "redirect:/board/view/{id}";
+    }
+    /**
+     * 글 삭제
+     */
+    @PostMapping("/delete/{id}")
+    public String deletePost(@PathVariable Long id){
+        boardService.delete(id);
+        return "redirect:/board";
     }
 }

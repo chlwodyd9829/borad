@@ -30,20 +30,20 @@
         <div class="container text-center border border-4 border-dark rounded">
             <div class="row border-bottom border-4 border-dark bg-dark">
                 <ul>
-                    <li class="col"><span>번호</span></li>
-                    <li class="col"><span>제목</span></li>
-                    <li class="col"><span>작성자</span></li>
-                    <li class="col"><span>조회수</span></li>
-                    <li class="col"><span>작성시간</span></li>
+                    <li class="col-2"><span>번호</span></li>
+                    <li class="col-2"><span>제목</span></li>
+                    <li class="col-2"><span>작성자</span></li>
+                    <li class="col-2"><span>조회수</span></li>
+                    <li class="col-3"><span>작성시간</span></li>
                 </ul>
             </div>
             <div class="row">
                 <div th:each="boardContent : ${boardList}" class="boardContent">
-                    <p class="col" th:field="${boardContent.id}" th:text="${boardContent.id}">번호</p>
-                    <a class="col" th:href="|/board/view/${boardContent.id}|" th:field="${boardContent.title}" th:text="${boardContent.title}">제목</a>
-                    <p class="col" th:field="${boardContent.userId}" th:text="${boardContent.userId}">작성자</p>
-                    <p class="col" th:field="${boardContent.viewCnt}" th:text="${boardContent.viewCnt}">조회수</p>
-                    <p class="col" th:field="${boardContent.postTime}" th:text="${boardContent.postTime}">작성시간</p>
+                    <p class="col-2" th:field="${boardContent.id}" th:text="${boardContent.id}">번호</p>
+                    <a class="col-2" th:href="|/board/view/${boardContent.id}|" th:field="${boardContent.title}" th:text="${boardContent.title}">제목</a>
+                    <p class="col-2" th:field="${boardContent.userId}" th:text="${boardContent.userId}">작성자</p>
+                    <p class="col-2" th:field="${boardContent.viewCnt}" th:text="${boardContent.viewCnt}">조회수</p>
+                    <p class="col-3" th:field="${boardContent.postTime}" th:text="${boardContent.postTime}">작성시간</p>
                 </div>
             </div>
         </div>
