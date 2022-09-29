@@ -1,9 +1,6 @@
 package com.spring.borad.controller;
 
-import com.spring.borad.domain.board.BoardVO;
-import com.spring.borad.domain.board.Posting;
-import com.spring.borad.domain.board.PostingForm;
-import com.spring.borad.domain.board.ViewForm;
+import com.spring.borad.domain.board.*;
 import com.spring.borad.domain.user.JoinForm;
 import com.spring.borad.domain.user.LoginForm;
 import com.spring.borad.domain.user.User;
@@ -37,7 +34,7 @@ public class BoardController {
     //메인 화면, 게시글 목록이 보인다.
     @PostConstruct
     public void init(){
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 8; i++){
             PostingForm content = new PostingForm(Integer.toString(i + 1), Integer.toString(i + 1), "content");
             boardService.makePost(content);
         }
@@ -53,13 +50,14 @@ public class BoardController {
      * 게시판 메인
      */
     @GetMapping
-    public String home(@RequestParam(required = false, defaultValue = "1")int page, Model model,HttpServletRequest request) {
+    public String home(@RequestParam(required = false) String title ,@RequestParam(required = false, defaultValue = "1")int page, Model model,HttpServletRequest request) {
         Pagination pagination = new Pagination();
         int listCnt = boardService.getListCnt();
         pagination.pageinfo(page,listCnt);
         log.info("pagination={}", pagination.toString());
         model.addAttribute("pagination", pagination);
-        List<BoardVO> boardVOList = boardService.boardVOPageList(pagination.getListSize(),pagination.getStart()-1);
+        List<BoardVO> boardVOList;
+        boardVOList = boardService.boardVOPageList(pagination.getListSize(), pagination.getStart() - 1);
         model.addAttribute("boardList",boardVOList);
 
         if(request.getSession() != null){
@@ -167,6 +165,10 @@ public class BoardController {
         ViewForm viewForm = new ViewForm(posting.getId(), posting.getTitle(), posting.getName(), posting.getContent(), posting.getViewCnt());
         model.addAttribute("viewForm",viewForm);
         model.addAttribute("loginUser",session.getAttribute("loginUser"));
+
+        model.addAttribute("comment", new CommentForm());
+        List<Comment> commentList = boardService.getCommentList(id);
+        model.addAttribute("commentList",commentList);
         return "view";
     }
     /**
@@ -181,7 +183,7 @@ public class BoardController {
     }
 
     @PostMapping("/update/{id}")
-    public String updatePost(@Validated @PathVariable Long id, @ModelAttribute ViewForm viewForm,BindingResult bindingResult){
+    public String updatePost( @PathVariable Long id,@Validated @ModelAttribute ViewForm viewForm,BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return "update";
         }
@@ -195,5 +197,21 @@ public class BoardController {
     public String deletePost(@PathVariable Long id){
         boardService.delete(id);
         return "redirect:/board";
+    }
+    /**
+     * 댓글 등록
+     */
+    @PostMapping("/comment/{boardId}")
+    public String comment(@PathVariable Long boardId, @Validated CommentForm commentForm,BindingResult bindingResult,HttpServletRequest request){
+        if (bindingResult.hasErrors()){
+            return "redirect:/board/view/{boardId}";
+        }
+        HttpSession session = request.getSession();
+        if(session.getAttribute("loginUser") != null){
+            User loginUser = (User) session.getAttribute("loginUser");
+            commentForm.setUserId(loginUser.getId());
+        }
+        Comment comment = boardService.makeComment(commentForm);
+        return "redirect:/board/view/{boardId}";
     }
 }

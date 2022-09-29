@@ -1,9 +1,8 @@
 package com.spring.borad.service;
 
-import com.spring.borad.domain.board.BoardVO;
-import com.spring.borad.domain.board.Posting;
-import com.spring.borad.domain.board.PostingForm;
+import com.spring.borad.domain.board.*;
 import com.spring.borad.repository.board.BoardRepository;
+import com.spring.borad.repository.board.CommentRepository;
 import com.spring.borad.repository.board.PostRepository;
 import com.spring.borad.service.board.BoardService;
 import org.junit.jupiter.api.Test;
@@ -25,6 +24,7 @@ class BoardServiceTest {
 
     @Autowired
     private PostRepository postRepository;
+
 
     @Test
     void save(){
@@ -81,5 +81,42 @@ class BoardServiceTest {
         boardService.viewCnt(savePost.getId());
         BoardVO findBoard = boardRepository.findById(boardVO.getId()).stream().findAny().orElse(null);
         assertThat(findBoard.getViewCnt()).isEqualTo(1);
+    }
+
+    @Test
+    void updatePost(){
+        PostingForm postingForm = new PostingForm("title", "name", "content");
+        BoardVO boardVO = boardService.makePost(postingForm);
+        boardService.update(new ViewForm(boardVO.getId(), boardVO.getTitle(), boardVO.getUserId(), "updateContent",0));
+
+        Posting posting = boardService.viewPost(boardVO.getId());
+        assertThat(posting.getContent()).isEqualTo("updateContent");
+    }
+
+    @Test
+    void deletePost(){
+        PostingForm postingForm = new PostingForm("title", "name", "content");
+        BoardVO boardVO = boardService.makePost(postingForm);
+        Long id = boardVO.getId();
+
+        Posting posting = boardService.viewPost(id);
+        id = posting.getId();
+        assertThat(posting).isNotNull();
+
+        boardService.delete(id);
+        Posting findPosting = boardService.viewPost(id);
+        assertThat(findPosting).isNull();
+    }
+
+    @Test
+    void makeComment(){
+        CommentForm commentForm = new CommentForm(1L, "userId", "content");
+
+        Comment saveComment = boardService.makeComment(commentForm);
+
+        assertThat(saveComment.getId()).isEqualTo(1L);
+        assertThat(saveComment.getUserId()).isEqualTo("userId");
+        assertThat(saveComment.getBoardId()).isEqualTo(1L);
+        assertThat(saveComment.getContent()).isEqualTo("content");
     }
 }

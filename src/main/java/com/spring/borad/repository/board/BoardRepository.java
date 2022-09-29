@@ -24,4 +24,5 @@ public interface BoardRepository extends JpaRepository<BoardVO,Long> {
     @Modifying
     @Query(value = "update boardvo set title = ?1 , post_Time = ?2 where id = ?3",nativeQuery = true)
     void updateBoard(String title, String postTime, Long id);
+
 }

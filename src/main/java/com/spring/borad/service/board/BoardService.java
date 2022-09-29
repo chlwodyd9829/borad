@@ -1,10 +1,8 @@
 package com.spring.borad.service.board;
 
-import com.spring.borad.domain.board.BoardVO;
-import com.spring.borad.domain.board.Posting;
-import com.spring.borad.domain.board.PostingForm;
-import com.spring.borad.domain.board.ViewForm;
+import com.spring.borad.domain.board.*;
 import com.spring.borad.repository.board.BoardRepository;
+import com.spring.borad.repository.board.CommentRepository;
 import com.spring.borad.repository.board.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +21,8 @@ import java.util.Optional;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final PostRepository postRepository;
+
+    private final CommentRepository commentRepository;
 
     /**
      * 모든 게시글 목록 반환
@@ -64,10 +65,11 @@ public class BoardService {
     /**
      * 게시글 등록
      */
-    public void makePost(PostingForm postingForm){
+    public BoardVO makePost(PostingForm postingForm){
         Posting posting = new Posting(postingForm.getTitle(), postingForm.getName(), postingForm.getContent());
         postRepository.save(posting);
-        savePost(new BoardVO(posting.getName(), posting.getTitle(), null));
+        BoardVO boardVO = savePost(new BoardVO(posting.getName(), posting.getTitle(), null));
+        return boardVO;
     }
     /**
      * 게시글 보기
@@ -100,6 +102,37 @@ public class BoardService {
         if(boardVO == null){
             return;
         }
-        boardRepository.delete(boardVO);
+        boardRepository.deleteById(id);
+        postRepository.deleteById(id);
+    }
+    /**
+     * 해당 게시물 댓글 가져오기
+     */
+    public List<Comment> getCommentList(Long boardId){
+        log.info("Get Comments");
+        List<Comment> commentList = commentRepository.findByBoardId(boardId);
+        for (Comment comment : commentList) {
+            log.info("comment {}", comment.toString());
+        }
+        return commentList;
+    }
+    /**
+     * 댓글 등록
+     */
+    public Comment makeComment(CommentForm commentForm){
+        Comment comment = new Comment();
+        comment.setBoardId(commentForm.getBoardId());
+        if(commentForm.getUserId() != null) {
+            comment.setUserId(commentForm.getUserId());
+        }
+        comment.setContent(commentForm.getContent());
+        Comment save = commentRepository.save(comment);
+        return save;
+    }
+    /**
+     * 댓글 삭제
+     */
+    public void deleteComment(Long id){
+        commentRepository.deleteById(id);
     }
 }
