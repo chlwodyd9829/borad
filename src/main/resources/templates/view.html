@@ -44,20 +44,21 @@
                 </div>
             </form>
 <!--            댓글-->
-            <div class="container">
+            <div class="container row-cols-2 comment" style="padding: 10px 10px;">
                 <h1 class="text-decoration-underline" style="font-size: 2em;">댓글</h1>
-                <div th:each="com : ${commentList}">
+                <div th:each="com : ${commentList}" class="border border-dark rounded" style="margin:5px 0px;">
                     <input type="text" th:value="${com.id}" hidden>
                     <div class="row">
                         <label th:if="${com.userId != null}" class="col d-inline-block" th:text="${com.userId}">작성자</label>
                         <label th:unless="${com.userId != null}" class="col d-inline-block" th:text="비회원">작성자</label>
                     </div>
                     <div class="row">
-                        <input type="text" class="col-7" th:value="${com.content}" readonly>
+                        <input type="text" th:value="${com.content}" style="border: none; z-index: -1;" readonly>
+                        <a th:if="${loginUser != null && com.userId == loginUser?.id}" th:onclick="|deleteComment(${com.id})|">삭제</a>
                     </div>
                 </div>
-                <form th:object="${comment}" th:action="|/board/comment/${viewForm.id}|" method="post">
-                    <div class="row">
+                <form th:object="${comment}" th:action="|/board/comment/${viewForm.id}|" style="margin-top: 10px" method="post">
+                    <div class="row new_com">
                         <textarea class="col-7" th:field="*{content}"></textarea>
                         <button class="col-sm-1 btn btn-dark" type="submit">작성</button>
                     </div>
@@ -76,6 +77,16 @@
                 form.submit();
                 alert("삭제 되었습니다.");
             }
+        }
+        function deleteComment(id){
+            let boardId = [[${viewForm.id}]];
+            let form = document.createElement("form");
+            let url = "/board/comment/delete/"+boardId+"/"+id;
+            form.setAttribute("method", "post");
+            form.setAttribute("action", url);
+            document.body.appendChild(form);
+            form.submit();
+            alert("삭제 되었습니다.");
         }
     </script>
 </body>

@@ -214,4 +214,12 @@ public class BoardController {
         Comment comment = boardService.makeComment(commentForm);
         return "redirect:/board/view/{boardId}";
     }
+    /**
+     * 댓글 삭제
+     */
+    @PostMapping("/comment/delete/{boardId}/{id}")
+    public String delComment(@PathVariable Long boardId,@PathVariable Long id){
+        boardService.deleteComment(id);
+        return "redirect:/board/view/{boardId}";
+    }
 }
